@@ -1,4 +1,4 @@
-# ЛР №1-2 — Вёрстка сайта + JavaScript калькулятор
+# ЛР №1 — Вёрстка сайта на HTML и CSS
 
 > **Тема:** cloud_hosting.ru  
 > [← Вернуться к оглавлению](https://github.com/ashkerov/PSP)
@@ -10,131 +10,222 @@
 - [Цель](#цель)
 - [Что реализовано](#что-реализовано)
 - [Структура проекта](#структура-проекта)
-- [Калькулятор — логика](#калькулятор--логика)
-  - [Парсинг выражений](#парсинг-выражений)
-  - [Приоритет операторов](#приоритет-операторов)
-  - [Повторное нажатие «=»](#повторное-нажатие-)
-  - [Обработка клавиатуры](#обработка-клавиатуры)
-- [Вёрстка сайта](#вёрстка-сайта)
+- [Вёрстка страниц](#вёрстка-страниц)
+  - [Главная страница](#главная-страница)
+  - [Страница калькулятора](#страница-калькулятора)
+  - [Страница «О компании»](#страница-о-компании)
+- [CSS — стилизация](#css--стилизация)
+  - [CSS Custom Properties](#css-custom-properties)
+  - [Шапка сайта](#шапка-сайта)
+  - [Hero-секция](#hero-секция)
+  - [Калькулятор — кнопки и дисплей](#калькулятор--кнопки-и-дисплей)
+  - [Панель истории](#панель-истории)
+  - [Подвал](#подвал)
 - [Запуск](#запуск)
 
 ---
 
 ## Цель
 
-Создание многостраничного сайта и JavaScript-калькулятора с поддержкой выражений.
+Верстка многостраничного сайта облачного хостинга на чистом HTML и CSS без JavaScript.
 
 ## Что реализовано
 
-- Многостраничный сайт: главная, калькулятор, о компании
-- Калькулятор: ввод цифр, операторы (+, −, ×, ÷), процент, смена знака
-- Приоритет операций (умножение/деление раньше сложения/вычитания)
-- История вычислений (последние 30 записей)
-- Ввод с клавиатуры
-- Адаптивная вёрстка
+- Три страницы: главная, калькулятор, о компании
+- Адаптивная вёрстка с Flexbox и Grid
+- CSS Custom Properties для цветовой схемы
+- Интерфейс калькулятора с кнопками и дисплеем
+- Панель истории вычислений
+- Шапка с навигацией и подвал
 
 ## Структура проекта
 
 ```
 ├── project/
-│   ├── index.html           // Главная страница
-│   ├── calculator.html      // Калькулятор
-│   └── about.html           // О компании
-├── js/
-│   └── script.js            // Логика калькулятора
-└── css/
-    └── style.css            // Стили
+│   ├── index.html            // Главная страница
+│   ├── calculator.html       // Калькулятор
+│   ├── calculator_o.html     // Вариант калькулятора
+│   └── about.html            // О компании
+├── css/
+│   ├── style.css             // Основные стили
+│   └── style_o.css           // Альтернативные стили
+└── img/
+    └── main1.webp            // Изображение сервера
 ```
 
-## Калькулятор — логика
+## Вёрстка страниц
 
-### Парсинг выражений
+### Главная страница
 
-Калькулятор работает с массивом токенов — чисел и операторов. При нажатии цифры обновляется текущее число, при нажатии оператора — число и оператор добавляются в массив:
+Hero-секция с заголовком, описанием и кнопкой CTA. Ниже — блок описания сервиса:
 
-```js
-function inputOp(op) {
-  const current = parseFloat(displayValue);
-  tokens.push({ type: "num", val: current });
-  tokens.push({ type: "op", val: op });
-  freshInput = true;
+```html
+<section class="hero">
+  <div class="container">
+    <div class="hero__grid">
+      <div>
+        <h1>Виртуальные серверы с KVM</h1>
+        <p>Аренда виртуальных серверов (VPS/VDS) с гарантированными
+           ресурсами с технологией виртуализации KVM</p>
+        <a href="#" class="btn btn--green btn--large">Оставить заявку</a>
+      </div>
+      <div class="hero__image">
+        <img src="/img/main1.webp" alt="Виртуальный сервер" class="hero__img" />
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+### Страница калькулятора
+
+Разметка калькулятора — дисплей с выражением и результатом, сетка кнопок (цифры, операторы, служебные):
+
+```html
+<div class="calc">
+  <div class="display-area">
+    <div id="expression" class="expression expression--big">0</div>
+    <div id="result" class="result result--hidden">0</div>
+  </div>
+
+  <div class="buttons">
+    <div class="btn-row">
+      <button id="btn_op_clear" class="my-btn secondary">C</button>
+      <button id="btn_op_sign" class="my-btn secondary">+/−</button>
+      <button id="btn_op_percent" class="my-btn secondary">%</button>
+      <button id="btn_op_div" class="my-btn operator">÷</button>
+    </div>
+    <div class="btn-row">
+      <button id="btn_digit_7" class="my-btn" data-val="7">7</button>
+      <button id="btn_digit_8" class="my-btn" data-val="8">8</button>
+      <button id="btn_digit_9" class="my-btn" data-val="9">9</button>
+      <button id="btn_op_mult" class="my-btn operator">×</button>
+    </div>
+    <!-- ... остальные ряды -->
+  </div>
+</div>
+```
+
+### Страница «О компании»
+
+Стандартная информационная страница с шапкой, контентом и подвалом.
+
+## CSS — стилизация
+
+### CSS Custom Properties
+
+Цветовая схема задана через переменные в `:root` — легко менять тему:
+
+```css
+:root {
+  --green: #24c16d;
+  --green-dark: #18a85c;
+  --bg: #f5f7fb;
+  --text: #111827;
+  --muted: #6b7280;
+  --line: #e5e7eb;
 }
 ```
 
-### Приоритет операторов
+### Шапка сайта
 
-Вычисление учитывает приоритет: `×` и `÷` выполняются раньше `+` и `−`. Реализовано через стековый алгоритм (аналог Shunting-yard):
+Flexbox-раскладка с логотипом и навигацией:
 
-```js
-function priority(op) {
-  return op === "x" || op === "/" ? 2 : 1;
+```css
+.header__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-function evalTokens(toks) {
-  let nums = [];
-  let ops = [];
-  for (let i = 0; i < toks.length; i++) {
-    if (toks[i].type === "num") {
-      nums.push(toks[i].val);
-    } else {
-      const op = toks[i].val;
-      while (ops.length && priority(ops[ops.length - 1]) >= priority(op)) {
-        const b = nums.pop();
-        const a = nums.pop();
-        nums.push(applyOne(ops.pop(), a, b));
-      }
-      ops.push(op);
-    }
-  }
-  while (ops.length) {
-    const b = nums.pop();
-    const a = nums.pop();
-    nums.push(applyOne(ops.pop(), a, b));
-  }
-  return nums[0];
+.nav a {
+  text-decoration: none;
+  color: inherit;
 }
 ```
 
-### Повторное нажатие «=»
+### Hero-секция
 
-При повторном нажатии `=` повторяется последняя операция с последним операндом (как в стандартном калькуляторе):
+Grid-раскладка для текста и изображения:
 
-```js
-function inputEqual() {
-  if (justEvaluated) {
-    const current = parseFloat(displayValue);
-    const result = applyOne(lastOp, current, lastOperand);
-    // 5 + 3 = 8, затем = → 8 + 3 = 11, = → 11 + 3 = 14
-    showResult(fmtNum(result));
-    return;
-  }
-  // ... обычное вычисление
+```css
+.hero__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.btn--green {
+  background: var(--green);
+  color: #fff;
+  border-radius: 8px;
+  padding: 12px 32px;
 }
 ```
 
-### Обработка клавиатуры
+### Калькулятор — кнопки и дисплей
 
-```js
-document.addEventListener("keydown", (e) => {
-  if (e.key >= "0" && e.key <= "9") inputDigit(e.key);
-  else if (e.key === ".") inputDigit(".");
-  else if (e.key === "+") inputOp("+");
-  else if (e.key === "-") inputOp("-");
-  else if (e.key === "*") inputOp("x");
-  else if (e.key === "/") { e.preventDefault(); inputOp("/"); }
-  else if (e.key === "Enter" || e.key === "=") inputEqual();
-  else if (e.key === "Escape") inputClear();
-  else if (e.key === "Backspace") { /* удаление последнего символа */ }
-});
+Кнопки калькулятора с градиентным фоном, скруглёнными углами и тенью:
+
+```css
+.calc {
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(17,24,39,0.07);
+}
+
+.my-btn {
+  border: none;
+  border-radius: 16px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.my-btn.operator {
+  background: var(--green);
+  color: #fff;
+}
 ```
 
-## Вёрстка сайта
+### Панель истории
 
-- CSS Custom Properties для цветовой схемы (`--green`, `--bg`, `--text`)
-- Flexbox/Grid для раскладки
-- Адаптивность через медиа-запросы
-- Тёмная тема калькулятора с градиентными кнопками
+Боковая панель с прокруткой для истории вычислений:
+
+```css
+.history-panel {
+  width: 260px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 20px;
+  max-height: 600px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-list {
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+}
+```
+
+### Подвал
+
+Grid-раскладка с колонками ссылок:
+
+```css
+.footer__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+```
 
 ## Запуск
 
-Открыть `project/index.html` через Live Server или любой локальный сервер.
+Открыть `project/index.html` в браузере или через Live Server в VS Code.
